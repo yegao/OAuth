@@ -1,0 +1,33 @@
+{
+  "name": "oauth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "product": "rollup -c rollup.config.pro.js",
+    "debug": "rollup -c -w",
+    "git": "git add . && git commit -am \"build\" && git push origin master",
+    "build": "npm run product && npm run git"
+  },
+  "author": "ygg",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-external-helpers": "^7.2.0",
+    "@babel/plugin-proposal-class-properties": "^7.2.1",
+    "@babel/preset-env": "^7.2.0",
+    "rollup": "^0.68.0",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-uglify": "^6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yegao/OAuth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yegao/OAuth/issues"
+  },
+  "homepage": "https://github.com/yegao/OAuth#readme"
+}

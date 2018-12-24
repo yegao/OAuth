@@ -1,9 +1,3 @@
-
-
-
-
-
-
 Internet Engineering Task Force (IETF)                     D. Hardt, Ed.
 Request for Comments: 6749                                     Microsoft
 Obsoletes: 5849                                             October 2012
@@ -11,190 +5,19 @@ Category: Standards Track
 ISSN: 2070-1721
 
 
-                 The OAuth 2.0 Authorization Framework
+                 OAuth 2.0 授权架构
 
-Abstract
+概要
 
-   The OAuth 2.0 authorization framework enables a third-party
-   application to obtain limited access to an HTTP service, either on
-   behalf of a resource owner by orchestrating an approval interaction
-   between the resource owner and the HTTP service, or by allowing the
-   third-party application to obtain access on its own behalf.  This
-   specification replaces and obsoletes the OAuth 1.0 protocol described
-   in RFC 5849.
+   OAuth 2.0授权框架允许第三方应用程序通过资源所有者和HTTP服务之间的批准交互,或者通过允许第三方应用程序获得资源所有者对HTTP服务的某些被限制性的访问权限。此规范取代并废弃了RFC 5849中描述的OAuth 1.0协议。
 
-Status of This Memo
+本备忘录的状态
 
-   This is an Internet Standards Track document.
+这是Internet标准跟踪文档。
 
-   This document is a product of the Internet Engineering Task Force
-   (IETF).  It represents the consensus of the IETF community.  It has
-   received public review and has been approved for publication by the
-   Internet Engineering Steering Group (IESG).  Further information on
-   Internet Standards is available in Section 2 of RFC 5741.
+本文档是Internet工程任务组（IETF）的产品。它代表了IETF社区的共识。它已经过公众审查，并已获得互联网工程指导小组（IESG）的批准发布。有关Internet标准的更多信息，请参见RFC 5741的第2节。
 
-   Information about the current status of this document, any errata,
-   and how to provide feedback on it may be obtained at
-   http://www.rfc-editor.org/info/rfc6749.
-
-Copyright Notice
-
-   Copyright (c) 2012 IETF Trust and the persons identified as the
-   document authors.  All rights reserved.
-
-   This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
-
-
-
-
-Hardt                        Standards Track                    [Page 1]
-
-RFC 6749                        OAuth 2.0                   October 2012
-
-
-Table of Contents
-
-   1. Introduction ....................................................4
-      1.1. Roles ......................................................6
-      1.2. Protocol Flow ..............................................7
-      1.3. Authorization Grant ........................................8
-           1.3.1. Authorization Code ..................................8
-           1.3.2. Implicit ............................................8
-           1.3.3. Resource Owner Password Credentials .................9
-           1.3.4. Client Credentials ..................................9
-      1.4. Access Token ..............................................10
-      1.5. Refresh Token .............................................10
-      1.6. TLS Version ...............................................12
-      1.7. HTTP Redirections .........................................12
-      1.8. Interoperability ..........................................12
-      1.9. Notational Conventions ....................................13
-   2. Client Registration ............................................13
-      2.1. Client Types ..............................................14
-      2.2. Client Identifier .........................................15
-      2.3. Client Authentication .....................................16
-           2.3.1. Client Password ....................................16
-           2.3.2. Other Authentication Methods .......................17
-      2.4. Unregistered Clients ......................................17
-   3. Protocol Endpoints .............................................18
-      3.1. Authorization Endpoint ....................................18
-           3.1.1. Response Type ......................................19
-           3.1.2. Redirection Endpoint ...............................19
-      3.2. Token Endpoint ............................................21
-           3.2.1. Client Authentication ..............................22
-      3.3. Access Token Scope ........................................23
-   4. Obtaining Authorization ........................................23
-      4.1. Authorization Code Grant ..................................24
-           4.1.1. Authorization Request ..............................25
-           4.1.2. Authorization Response .............................26
-           4.1.3. Access Token Request ...............................29
-           4.1.4. Access Token Response ..............................30
-      4.2. Implicit Grant ............................................31
-           4.2.1. Authorization Request ..............................33
-           4.2.2. Access Token Response ..............................35
-      4.3. Resource Owner Password Credentials Grant .................37
-           4.3.1. Authorization Request and Response .................39
-           4.3.2. Access Token Request ...............................39
-           4.3.3. Access Token Response ..............................40
-      4.4. Client Credentials Grant ..................................40
-           4.4.1. Authorization Request and Response .................41
-           4.4.2. Access Token Request ...............................41
-           4.4.3. Access Token Response ..............................42
-      4.5. Extension Grants ..........................................42
-
-
-
-Hardt                        Standards Track                    [Page 2]
-
-RFC 6749                        OAuth 2.0                   October 2012
-
-
-   5. Issuing an Access Token ........................................43
-      5.1. Successful Response .......................................43
-      5.2. Error Response ............................................45
-   6. Refreshing an Access Token .....................................47
-   7. Accessing Protected Resources ..................................48
-      7.1. Access Token Types ........................................49
-      7.2. Error Response ............................................49
-   8. Extensibility ..................................................50
-      8.1. Defining Access Token Types ...............................50
-      8.2. Defining New Endpoint Parameters ..........................50
-      8.3. Defining New Authorization Grant Types ....................51
-      8.4. Defining New Authorization Endpoint Response Types ........51
-      8.5. Defining Additional Error Codes ...........................51
-   9. Native Applications ............................................52
-   10. Security Considerations .......................................53
-      10.1. Client Authentication ....................................53
-      10.2. Client Impersonation .....................................54
-      10.3. Access Tokens ............................................55
-      10.4. Refresh Tokens ...........................................55
-      10.5. Authorization Codes ......................................56
-      10.6. Authorization Code Redirection URI Manipulation ..........56
-      10.7. Resource Owner Password Credentials ......................57
-      10.8. Request Confidentiality ..................................58
-      10.9. Ensuring Endpoint Authenticity ...........................58
-      10.10. Credentials-Guessing Attacks ............................58
-      10.11. Phishing Attacks ........................................58
-      10.12. Cross-Site Request Forgery ..............................59
-      10.13. Clickjacking ............................................60
-      10.14. Code Injection and Input Validation .....................60
-      10.15. Open Redirectors ........................................60
-      10.16. Misuse of Access Token to Impersonate Resource
-             Owner in Implicit Flow ..................................61
-   11. IANA Considerations ...........................................62
-      11.1. OAuth Access Token Types Registry ........................62
-           11.1.1. Registration Template .............................62
-      11.2. OAuth Parameters Registry ................................63
-           11.2.1. Registration Template .............................63
-           11.2.2. Initial Registry Contents .........................64
-      11.3. OAuth Authorization Endpoint Response Types Registry .....66
-           11.3.1. Registration Template .............................66
-           11.3.2. Initial Registry Contents .........................67
-      11.4. OAuth Extensions Error Registry ..........................67
-           11.4.1. Registration Template .............................68
-   12. References ....................................................68
-      12.1. Normative References .....................................68
-      12.2. Informative References ...................................70
-
-
-
-
-
-Hardt                        Standards Track                    [Page 3]
-
-RFC 6749                        OAuth 2.0                   October 2012
-
-
-   Appendix A. Augmented Backus-Naur Form (ABNF) Syntax ..............71
-     A.1.  "client_id" Syntax ........................................71
-     A.2.  "client_secret" Syntax ....................................71
-     A.3.  "response_type" Syntax ....................................71
-     A.4.  "scope" Syntax ............................................72
-     A.5.  "state" Syntax ............................................72
-     A.6.  "redirect_uri" Syntax .....................................72
-     A.7.  "error" Syntax ............................................72
-     A.8.  "error_description" Syntax ................................72
-     A.9.  "error_uri" Syntax ........................................72
-     A.10. "grant_type" Syntax .......................................73
-     A.11. "code" Syntax .............................................73
-     A.12. "access_token" Syntax .....................................73
-     A.13. "token_type" Syntax .......................................73
-     A.14. "expires_in" Syntax .......................................73
-     A.15. "username" Syntax .........................................73
-     A.16. "password" Syntax .........................................73
-     A.17. "refresh_token" Syntax ....................................74
-     A.18. Endpoint Parameter Syntax .................................74
-   Appendix B. Use of application/x-www-form-urlencoded Media Type ...74
-   Appendix C. Acknowledgements ......................................75
-
-1.  Introduction
+1.  介绍
 
    In the traditional client-server authentication model, the client
    requests an access-restricted resource (protected resource) on the
@@ -314,30 +137,6 @@ RFC 6749                        OAuth 2.0                   October 2012
    A single authorization server may issue access tokens accepted by
    multiple resource servers.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Hardt                        Standards Track                    [Page 6]
-
-RFC 6749                        OAuth 2.0                   October 2012
 
 
 1.2.  Protocol Flow
