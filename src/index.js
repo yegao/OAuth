@@ -8,4 +8,9 @@ let authorizeObject = authorize({
     style:'mobile'
 });
 
-console.log(authorizeObject,getAuthorizeUri(authorizeObject));
+document.addEventListener('DOMContentLoaded',function(){
+    // console.log(authorizeObject,getAuthorizeUri(authorizeObject));
+    let button = document.createElement('div');
+    button.innerHTML = `<a href="${getAuthorizeUri(authorizeObject)}">登陆</a>`;
+    document.body.appendChild(button);
+})
